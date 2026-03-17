@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浮 - 其生若浮，其死若休</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', sans-serif; background: #FDFBF7; color: #3A3A3A; line-height: 1.7; }
+        .navbar { position: fixed; top: 0; left: 0; right: 0; background: white; padding: 14px 48px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .logo { font-size: 24px; font-weight: 700; color: #2D5A5A; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #2D5A5A, #D4A574); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; }
+        .nav-links { display: flex; gap: 8px; }
+        .nav-link { padding: 10px 20px; border-radius: 8px; color: #3A3A3A; font-weight: 500; cursor: pointer; transition: 0.3s; }
+        .nav-link:hover, .nav-link.active { background: #F5E6D3; color: #2D5A5A; }
+        .user-area { display: flex; align-items: center; gap: 12px; }
+        .login-btn { padding: 8px 20px; background: #2D5A5A; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        .login-btn:hover { background: #3D7A7A; }
+        .main-content { padding-top: 72px; }
+        .page { display: none; padding: 40px 48px; max-width: 1400px; margin: 0 auto; }
+        .page.active { display: block; }
+        .hero { padding: 80px 48px; text-align: center; background: linear-gradient(180deg, #F5E6D3 0%, #FDFBF7 100%); }
+        .hero h1 { font-size: 52px; color: #2D5A5A; margin-bottom: 16px; }
+        .hero p { font-size: 18px; color: #6B7280; margin-bottom: 32px; }
+        .modules-section { padding: 60px 48px; max-width: 1400px; margin: 0 auto; }
+        .section-title { text-align: center; font-size: 32px; color: #2D5A5A; margin-bottom: 12px; }
+        .section-subtitle { text-align: center; color: #6B7280; margin-bottom: 40px; }
+        .modules-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+        .module-card { background: white; border-radius: 16px; padding: 28px; box-shadow: 0 4px 20px rgba(45, 90, 90, 0.1); cursor: pointer; transition: 0.3s; }
+        .module-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(45, 90, 90, 0.18); }
+        .module-icon { font-size: 40px; margin-bottom: 16px; }
+        .module-card h3 { color: #2D5A5A; margin-bottom: 8px; }
+        .module-card p { color: #6B7280; font-size: 14px; }
+        .module-tags { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+        .module-tag { background: #F5E6D3; color: #2D5A5A; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
+        .content-page { padding: 40px; }
+        .page-header { text-align: center; margin-bottom: 40px; }
+        .page-header h1 { font-size: 36px; color: #2D5A5A; margin-bottom: 12px; }
+        .page-header p { color: #6B7280; }
+        .search-bar { display: flex; gap: 12px; margin-bottom: 32px; justify-content: center; }
+        .search-input { padding: 12px 20px; border: 1px solid #ddd; border-radius: 8px; width: 300px; font-size: 14px; }
+        .filter-select { padding: 12px 20px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+        .content-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .content-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(45, 90, 90, 0.1); cursor: pointer; transition: 0.3s; }
+        .content-card:hover { transform: translateY(-4px); }
+        .content-card-image { padding: 40px; text-align: center; font-size: 48px; background: #F5E6D3; }
+        .content-card-body { padding: 20px; }
+        .content-card h3 { color: #2D5A5A; margin-bottom: 8px; }
+        .content-card p { color: #6B7280; font-size: 14px; }
+        .content-card-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee; }
+        .content-card-tag { background: #F5E6D3; color: #2D5A5A; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
+        .content-card-link { color: #2D5A5A; font-size: 14px; }
+        .test-select { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+        .test-card { background: white; border-radius: 16px; padding: 32px; box-shadow: 0 4px 20px rgba(45, 90, 90, 0.1); cursor: pointer; transition: 0.3s; text-align: center; width: 280px; }
+        .test-card:hover { transform: translateY(-4px); }
+        .test-card h3 { color: #2D5A5A; margin-bottom: 12px; }
+        .test-card p { color: #6B7280; font-size: 14px; margin-bottom: 16px; }
+        .test-btn { padding: 12px 32px; background: #2D5A5A; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
+        .news-list { display: grid; gap: 20px; }
+        .news-item { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(45, 90, 90, 0.1); cursor: pointer; display: flex; gap: 20px; transition: 0.3s; }
+        .news-item:hover { transform: translateY(-2px); }
+        .news-date { text-align: center; min-width: 60px; }
+        .news-date-day { font-size: 28px; font-weight: 700; color: #2D5A5A; }
+        .news-date-month { color: #6B7280; }
+        .news-content h3 { color: #2D5A5A; margin-bottom: 8px; }
+        .news-content p { color: #6B7280; font-size: 14px; }
+        .news-tag { display: inline-block; background: #F5E6D3; color: #2D5A5A; padding: 4px 12px; border-radius: 20px; font-size: 12px; margin-top: 12px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 16px; max-width: 700px; width: 100%; max-height: 80vh; overflow-y: auto; }
+        .modal-header { padding: 20px 24px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h2 { color: #2D5A5A; }
+        .modal-close { background: none; border: none; font-size: 28px; cursor: pointer; color: #6B7280; }
+        .modal-body { padding: 24px; }
+        .modal-body h3 { color: #2D5A5A; margin: 20px 0 12px; }
+        .modal-body h3:first-child { margin-top: 0; }
+        .modal-body ul { padding-left: 20px; }
+        .modal-body li { margin-bottom: 8px; }
+        .footer { background: #2D5A5A; color: white; padding: 40px 48px; text-align: center; margin-top: 60px; }
+        .footer h3 { margin-bottom: 16px; }
+        .footer-contact { margin-bottom: 12px; }
+        .footer-social { margin-bottom: 20px; }
+        .footer-copyright { opacity: 0.8; }
+        .back-btn { background: none; border: none; color: #2D5A5A; font-size: 16px; cursor: pointer; margin-bottom: 20px; }
+        .disclaimer { background: #FFF3CD; padding: 16px; border-radius: 8px; margin-top: 20px; }
+        .disclaimer h4 { color: #856404; margin-bottom: 8px; }
+        .disclaimer ul { padding-left: 20px; color: #856404; }
+        @media (max-width: 768px) { 
+            .navbar { padding: 12px 20px; flex-direction: column; gap: 10px; }
+            .modules-grid { grid-template-columns: 1fr; }
+            .content-grid { grid-template-columns: 1fr; }
+            .hero, .page { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">👻</div>
+            <span>浮 <span style="font-size:14px;font-weight:400;color:#6B7280;">其生若浮，其死若休</span></span>
+        </div>
+        <div class="nav-links">
+            <span class="nav-link active" id="nav-home" onclick="showPage('home')">首页</span>
+            <span class="nav-link" id="nav-expertise" onclick="showPage('expertise')">专业知识</span>
+            <span class="nav-link" id="nav-glossary" onclick="showPage('glossary')">名词解释</span>
+            <span class="nav-link" id="nav-test" onclick="showPage('test')">心理测试</span>
+            <span class="nav-link" id="nav-news" onclick="showPage('news')">新闻动态</span>
+        </div>
+        <div class="user-area">
+            <button class="login-btn" onclick="showAuthModal()">登录/注册</button>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <!-- 首页 -->
+        <div id="page-home" class="page active">
+            <div class="hero">
+                <h1>浮</h1>
+                <p>其生若浮，其死若休<br>探索心理学的深邃世界，寻找内心的平静与答案</p>
+            </div>
+            <section class="modules-section">
+                <h2 class="section-title">探索模块</h2>
+                <p class="section-subtitle">选择您感兴趣的模块，开启心理学学习之旅</p>
+                <div class="modules-grid">
+                    <div class="module-card" onclick="showPage('expertise')">
+                        <div class="module-icon">📚</div>
+                        <h3>专业知识</h3>
+                        <p>深入学习心理学五大流派的发展历史、核心理论、经典实验和咨询技术</p>
+                        <div class="module-tags">
+                            <span class="module-tag">精神分析</span>
+                            <span class="module-tag">行为主义</span>
+                            <span class="module-tag">人本主义</span>
+                        </div>
+                    </div>
+                    <div class="module-card" onclick="showPage('glossary')">
+                        <div class="module-icon">💡</div>
+                        <h3>名词解释</h3>
+                        <p>系统学习15+心理学术语，包含详细定义、理论出处、真实案例和应用场景</p>
+                        <div class="module-tags">
+                            <span class="module-tag">防御机制</span>
+                            <span class="module-tag">认知失调</span>
+                            <span class="module-tag">依恋类型</span>
+                        </div>
+                    </div>
+                    <div class="module-card" onclick="showPage('test')">
+                        <div class="module-icon">📝</div>
+                        <h3>心理测试</h3>
+                        <p>专业心理健康测评量表，SAS焦虑量表、SDS抑郁量表，全面了解心理状态</p>
+                        <div class="module-tags">
+                            <span class="module-tag">焦虑自评</span>
+                            <span class="module-tag">抑郁自评</span>
+                            <span class="module-tag">心理健康</span>
+                        </div>
+                    </div>
+                    <div class="module-card" onclick="showPage('news')">
+                        <div class="module-icon">📰</div>
+                        <h3>新闻动态</h3>
+                        <p>追踪心理学领域最新研究进展、行业热点和科普资讯</p>
+                        <div class="module-tags">
+                            <span class="module-tag">研究动态</span>
+                            <span class="module-tag">行业热点</span>
+                            <span class="module-tag">科普文章</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 专业知识 -->
+        <div id="page-expertise" class="page">
+            <div class="content-page">
+                <button class="back-btn" onclick="showPage('home')">← 返回首页</button>
+                <div class="page-header">
+                    <h1>心理学专业知识</h1>
+                    <p>深入了解心理学五大流派的发展历史、核心理论、经典实验和代表人物</p>
+                </div>
+                <div class="content-grid" id="expertise-grid"></div>
+            </div>
+        </div>
+
+        <!-- 名词解释 -->
+        <div id="page-glossary" class="page">
+            <div class="content-page">
+                <button class="back-btn" onclick="showPage('home')">← 返回首页</button>
+                <div class="page-header">
+                    <h1>心理学名词解释</h1>
+                    <p>系统学习心理学术语，包含定义、理论出处、真实案例和应用场景</p>
+                </div>
+                <div class="search-bar">
+                    <input type="text" class="search-input" id="glossary-search" placeholder="搜索术语..." onkeyup="filterGlossary()">
+                    <select class="filter-select" id="glossary-category" onchange="filterGlossary()">
+                        <option value="all">全部</option>
+                        <option value="clinical">临床</option>
+                        <option value="cognitive">认知</option>
+                        <option value="social">社会</option>
+                        <option value="developmental">发展</option>
+                    </select>
+                </div>
+                <div class="content-grid" id="glossary-grid"></div>
+            </div>
+        </div>
+
+        <!-- 心理测试 -->
+        <div id="page-test" class="page">
+            <div class="content-page">
+                <button class="back-btn" onclick="showPage('home')">← 返回首页</button>
+                <div class="page-header">
+                    <h1>心理测试</h1>
+                    <p>专业心理健康测评，全面了解您的心理状态</p>
+                </div>
+                <div class="test-select" id="test-select">
+                    <div class="test-card" onclick="startTest('anxiety')">
+                        <h3>焦虑自评量表(SAS)</h3>
+                        <p>用于评估焦虑状态的严重程度，包含20个条目</p>
+                        <button class="test-btn">开始测试</button>
+                    </div>
+                    <div class="test-card" onclick="startTest('depression')">
+                        <h3>抑郁自评量表(SDS)</h3>
+                        <p>用于评估抑郁状态的严重程度，包含20个条目</p>
+                        <button class="test-btn">开始测试</button>
+                    </div>
+                    <div class="test-card" onclick="startTest('mental')">
+                        <h3>心理健康自评</h3>
+                        <p>综合评估整体心理健康状态，包含10个维度</p>
+                        <button class="test-btn">开始测试</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 新闻动态 -->
+        <div id="page-news" class="page">
+            <div class="content-page">
+                <button class="back-btn" onclick="showPage('home')">← 返回首页</button>
+                <div class="page-header">
+                    <h1>心理学新闻动态</h1>
+                    <p>追踪心理学领域最新研究进展和行业资讯</p>
+                </div>
+                <div class="news-list" id="news-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title"></h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- 登录/注册弹窗 -->
+    <div class="modal" id="auth-modal">
+        <div class="modal-content" style="max-width:420px;">
+            <div class="modal-header">
+                <h2 id="auth-title">用户登录</h2>
+                <button class="modal-close" onclick="closeAuthModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div style="display:flex;gap:12px;margin-bottom:24px;">
+                    <button class="test-btn" id="tab-login" onclick="switchAuthTab('login')" style="flex:1;">登录</button>
+                    <button class="test-btn" id="tab-register" onclick="switchAuthTab('register')" style="flex:1;background:#666;">注册</button>
+                </div>
+                <div id="login-form">
+                    <div style="margin-bottom:16px;">
+                        <label style="display:block;margin-bottom:6px;">用户名</label>
+                        <input type="text" id="login-username" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;">
+                    </div>
+                    <div style="margin-bottom:16px;">
+                        <label style="display:block;margin-bottom:6px;">密码</label>
+                        <input type="password" id="login-password" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;">
+                    </div>
+                    <button class="test-btn" onclick="handleLogin()" style="width:100%;">登录</button>
+                </div>
+                <div id="register-form" style="display:none;">
+                    <div style="margin-bottom:16px;">
+                        <label style="display:block;margin-bottom:6px;">用户名</label>
+                        <input type="text" id="register-username" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;">
+                    </div>
+                    <div style="margin-bottom:16px;">
+                        <label style="display:block;margin-bottom:6px;">邮箱</label>
+                        <input type="email" id="register-email" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;">
+                    </div>
+                    <div style="margin-bottom:16px;">
+                        <label style="display:block;margin-bottom:6px;">密码</label>
+                        <input type="password" id="register-password" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;">
+                    </div>
+                    <button class="test-btn" onclick="handleRegister()" style="width:100%;">注册</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <h3>联系我们</h3>
+        <p class="footer-contact">学习交流请关注小红书</p>
+        <div class="footer-social">小红书号：701878582</div>
+        <p class="footer-copyright">© 2026 浮 | 其生若浮，其死若休</p>
+    </footer>
+
+    <script>
+        // 数据
+        const expertiseData = [
+            {type:'school',title:'精神分析学派',icon:'🔮',description:'由弗洛伊德创立，强调潜意识对行为的影响',content:'<h3>发展历史</h3><p>精神分析学派于19世纪末由奥地利神经学家西格蒙德·弗洛伊德创立。1896年，弗洛伊德首次使用"精神分析"这一术语。1900年，《梦的解析》出版，标志着精神分析的诞生。</p><h3>核心理论</h3><ul><li><strong>潜意识理论</strong>：人的心理分为意识、前意识和潜意识三层</li><li><strong>人格结构</strong>：本我（快乐原则）、自我（现实原则）、超我（道德原则）</li><li><strong>防御机制</strong>：自我保护的无意识心理策略</li></ul><h3>主要咨询技术</h3><ul><li>自由联想</li><li>梦的解析</li><li>移情分析</li></ul>'},
+            {type:'school',title:'行为主义学派',icon:'🐕',description:'研究可观察行为的科学，强调环境对行为的决定作用',content:'<h3>发展历史</h3><p>行为主义于1913年由约翰·华生创立。</p><h3>核心理论</h3><ul><li>经典条件反射</li><li>操作性条件反射</li><li>观察学习</li></ul>'},
+            {type:'school',title:'人本主义学派',icon:'🌟',description:'强调人的自我实现和主观经验',content:'<h3>核心理论</h3><ul><li>自我实现</li><li>需求层次</li><li>高峰体验</li></ul>'},
+            {type:'school',title:'认知心理学派',icon:'🧠',description:'研究心理过程和认知结构',content:'<h3>核心理论</h3><ul><li>信息加工理论</li><li>图式理论</li><li>双过程理论</li></ul>'},
+            {type:'school',title:'积极心理学',icon:'☀️',description:'研究人类优势、幸福感和美好生活',content:'<h3>核心理论</h3><ul><li>积极情绪</li><li>品格优势</li><li>PERMA模型</li></ul>'},
+            {type:'person',title:'西格蒙德·弗洛伊德',icon:'👨‍⚕️',description:'精神分析学派创始人',content:'<h3>生平简介</h3><p>西格蒙德·弗洛伊德(1856-1939)，出生于奥地利。1896年首次使用"精神分析"一词。</p><h3>主要贡献</h3><ul><li>潜意识理论</li><li>人格结构（本我、自我、超我）</li><li>梦的解析</li></ul>',books:[{title:'梦的解析',link:'https://book.douban.com/subject/10512639/'}]},
+            {type:'person',title:'卡尔·荣格',icon:'🔯',description:'分析心理学创始人',content:'<h3>生平简介</h3><p>卡尔·古斯塔夫·荣格(1875-1961)，瑞士精神科医生。</p><h3>主要贡献</h3><ul><li>集体无意识</li><li>原型理论</li><li>人格类型</li></ul>',books:[{title:'心理类型',link:'https://book.douban.com/subject/20262628/'}]},
+            {type:'person',title:'卡尔·罗杰斯',icon:'🤝',description:'人本主义心理学代表人物',content:'<h3>主要贡献</h3><ul><li>来访者中心疗法</li><li>共情理解</li><li>无条件积极关注</li></ul>',books:[{title:'成为一个人',link:'https://book.douban.com/subject/27067808/'}]},
+            {type:'person',title:'亚伯拉罕·马斯洛',icon:'📈',description:'需求层次理论创始人',content:'<h3>主要贡献</h3><ul><li>需求层次理论</li><li>自我实现理论</li><li>高峰体验</li></ul>',books:[{title:'动机与人格',link:'https://book.douban.com/subject/2064365/'}]},
+            {type:'book',title:'《梦的解析》',icon:'📖',description:'弗洛伊德代表作',content:'<h3>核心内容</h3><ul><li>梦的潜意识来源</li><li>梦的象征意义</li><li>释梦方法</li></ul>',link:'https://book.douban.com/subject/10512639/'},
+            {type:'book',title:'《自卑与超越》',icon:'📖',description:'阿德勒代表作',content:'<h3>核心内容</h3><ul><li>自卑感是人格发展的根本动力</li><li>补偿机制</li><li>生活风格</li></ul>',link:'https://book.douban.com/subject/20562313/'},
+            {type:'book',title:'《思考，快与慢》',icon:'📖',description:'卡尼曼代表作',content:'<h3>核心内容</h3><ul><li>系统1与系统2</li><li>认知偏见</li><li>决策启发式</li></ul>',link:'https://book.douban.com/subject/10785583/'}
+        ];
+
+        const glossaryData = [
+            {term:'移情',english:'Transference',category:'clinical',icon:'💕',source:'弗洛伊德1905年提出',definition:'指患者在心理咨询过程中，将对过去重要他人的情感转移到治疗师身上。',theory:'移情产生于患者的潜意识层面，是患者将早期未解决的冲突投射到治疗师身上。',cases:[{title:'案例一',content:'小明从小缺乏父爱，在心理咨询中把治疗师当作父亲角色，产生依赖情绪。'}],application:'临床治疗中帮助患者识别和理解早期关系模式。'},
+            {term:'防御机制',english:'Defense Mechanism',category:'clinical',icon:'🛡️',source:'弗洛伊德提出',definition:'自我为了应对焦虑和冲突而采取的无意识心理策略。',theory:'成熟的防御机制包括升华、幽默等；不成熟的包括投射、否认等。',cases:[{title:'案例一',content:'小王失恋后告诉自己"根本不在乎"，这是合理化防御。'}],application:'帮助来访者识别不成熟的防御方式。'},
+            {term:'认知失调',english:'Cognitive Dissonance',category:'cognitive',icon:'⚖️',source:'费斯廷格1957年提出',definition:'当态度、信念或行为之间不一致时产生的心理不适感。',theory:'人类有保持认知一致性的动机，会采取措施减少不一致。',cases:[{title:'案例一',content:'明知吸烟有害健康的人会通过"吸烟让我放松"来减少矛盾。'}],application:'用于健康教育、改变不良行为。'},
+            {term:'自我效能感',english:'Self-Efficacy',category:'cognitive',icon:'💪',source:'班杜拉1977年提出',definition:'个体对自己能够成功完成特定任务的信心程度。',theory:'来源于直接经验、替代经验、言语说服、生理状态。',cases:[{title:'案例一',content:'小红相信自己能够通过考试，因此更加努力学习。'}],application:'教育、健康心理、职业辅导等领域。'},
+            {term:'依恋类型',english:'Attachment Style',category:'developmental',icon:'🔗',source:'鲍尔比1960年代提出',definition:'由早期亲子关系形成的对他人可信赖程度的心理模式。',theory:'安全型、焦虑型、回避型三种主要类型。',cases:[{title:'案例一',content:'安全型依恋的人更容易建立亲密关系。'}],application:'婚恋咨询、亲子教育、创伤治疗。'},
+            {term:'心流状态',english:'Flow',category:'cognitive',icon:'🌊',source:'契克森米哈伊1975年提出',definition:'完全沉浸于某项活动中的最佳体验状态。',theory:'当挑战水平略高于技能时最可能进入心流。',cases:[{title:'案例一',content:'画家创作时忘记吃饭和时间，完全投入绘画。'}],application:'提升工作效率、创造沉浸式学习体验。'},
+            {term:'情绪智力',english:'Emotional Intelligence',category:'cognitive',icon:'🧠',source:'萨洛韦和梅耶1990年提出',definition:'识别、理解和管理自己及他人情绪的能力。',theory:'包括自我意识、自我管理、社会意识、关系管理。',cases:[{title:'案例一',content:'高情绪智力的人能够在愤怒时冷静下来。'}],application:'领导力发展、团队建设、教育。'},
+            {term:'刻板印象',english:'Stereotype',category:'social',icon:'👥',source:'李普曼1922年提出',definition:'对某个社会群体成员持有的过度简化、概括化的信念。',theory:'形成于社会学习过程，可能导致偏见和歧视。',cases:[{title:'案例一',content:'认为"女性不适合学数学"是典型的性别刻板印象。'}],application:'反偏见培训、多元化管理。'},
+            {term:'旁观者效应',english:'Bystander Effect',category:'social',icon:'👀',source:'达利和拉塔内1968年提出',definition:'他人在场时，个体帮助他人的可能性降低。',theory:'责任分散、社会影响、评价焦虑是主要原因。',cases:[{title:'案例一',content:'大街上有人晕倒，人越多反而越没人管。'}],application:'紧急救援培训、公共安全设计。'},
+            {term:'马斯洛需求层次',english:'Maslow\'s Hierarchy',category:'developmental',icon:'📶',source:'马斯洛1943年提出',definition:'人类需求从低到高分为生理、安全、社交、尊重、自我实现五个层次。',theory:'低层次需求满足后才会追求高层次需求。',cases:[{title:'案例一',content:'失业者首要需求是生存，而非自我实现。'}],application:'企业管理、市场营销、教育。'},
+            {term:'皮格马利翁效应',english:'Pygmalion Effect',category:'social',icon:'✨',source:'罗森塔尔和雅各布森1968年验证',definition:'教师的高期望会导致学生表现更好。',theory:'积极期望通过非语言线索传递，他人会按期望方式表现。',cases:[{title:'案例一',content:'老师对某学生说有天赋，学生果真表现更好。'}],application:'教育、管理、自我实现。'},
+            {term:'操作性条件反射',english:'Operant Conditioning',category:'cognitive',icon:'🔘',source:'斯金纳1938年提出',definition:'通过强化来建立或消除行为的过程。',theory:'正强化、负强化、正惩罚、负惩罚四种类型。',cases:[{title:'案例一',content:'训练宠物时给零食奖励，它会学会执行动作。'}],application:'行为矫正、教育、组织行为管理。'},
+            {term:'锚定效应',english:'Anchoring Effect',category:'cognitive',icon:'⚓',source:'特沃斯基和卡尼曼1974年发现',definition:'人们倾向于过度依赖最初获得的信息来做决策。',theory:'从锚点开始调整往往不充分。',cases:[{title:'案例一',content:'商场先标高价再打折，消费者觉得折扣价很划算。'}],application:'谈判策略、营销、决策培训。'},
+            {term:'亲社会行为',english:'Prosocial Behavior',category:'social',icon:'❤️',definition:'有益于他人或社会的积极行为。',theory:'动机包括利他主义、功利主义、社会规范、同理心。',cases:[{title:'案例一',content:'看到老人摔倒立即上前扶起。'}],application:'公民教育、组织文化、心理治疗。'},
+            {term:'元认知',english:'Metacognition',category:'cognitive',icon:'🎓',source:'弗拉维尔1979年提出',definition:'对思维的思维，即个体对自己认知过程的知识和调控。',theory:'包括元认知知识、元认知体验、元认知调节。',cases:[{title:'案例一',content:'考试中意识到时间不够，决定先跳过后面的题目。'}],application:'学习策略培训、考试辅导、认知治疗。'}
+        ];
+
+        const testData = {
+            anxiety:{name:'焦虑自评量表(SAS)',intro:'用于评估焦虑状态的严重程度，包含20个条目。50分以下正常，50-59轻度，60-69中度，70以上重度。',questions:['我觉得比平时容易紧张和着急','我无缘无故地感到害怕','我容易心里烦乱或觉得惊恐','我觉得我可能要发疯','我觉得一切都很好','我手脚发抖打颤','我因为头痛而苦恼','我感觉容易衰弱和疲乏','我觉得心平气和','我觉得心跳得很快','我因为头晕而苦恼','我有晕倒发作','我吸气呼气容易','我的手脚麻木刺痛','我因为胃痛而苦恼','我常常要小便','我的手干燥温暖','我脸红发热','我容易入睡','我做恶梦'],options:['没有或很少','小部分时间','相当多时间','绝大部分时间'],scores:[1,2,3,4],reverse:[5,9,13,17,19],levels:[{max:49,level:'正常',class:'',desc:'您的焦虑水平在正常范围内。'},{max:59,level:'轻度焦虑',class:'',desc:'您存在一定程度的焦虑情绪，建议适当放松。'},{max:69,level:'中度焦虑',class:'',desc:'您的焦虑程度较明显，建议关注情绪状态。'},{max:100,level:'重度焦虑',class:'',desc:'建议尽快咨询专业心理医生。'}],advice:['深呼吸练习','规律作息','减少咖啡因','记录焦虑触发因素','寻求专业帮助']},
+            depression:{name:'抑郁自评量表(SDS)',intro:'用于评估抑郁状态的严重程度，包含20个条目。',questions:['我感到情绪沮丧','我感到早晨心情最好','我要哭或想哭','我夜间睡眠不好','我吃饭像平时一样多','我的性功能正常','我感到体重减轻','我为便秘烦恼','我的心跳比平时快','我无故感到疲劳','我的头脑像往常一样清楚','我做事情像平时一样不感到困难','我坐卧不安','我对未来感到有希望','我比平时更容易激怒','我觉得决定什么事很容易','我感到自己是有用的','我的生活很有意义','假若我死了别人会过得更好','我仍旧喜爱自己平时喜爱的东西'],options:['没有或很少','小部分时间','相当多时间','绝大部分时间'],scores:[1,2,3,4],reverse:[2,5,6,11,12,14,16,17,18,20],levels:[{max:49,level:'正常',class:'',desc:'您的情绪状态良好。'},{max:59,level:'轻度抑郁',class:'',desc:'您存在一定程度的抑郁情绪，建议增加社交活动。'},{max:69,level:'中度抑郁',class:'',desc:'建议关注情绪，寻求专业帮助。'},{max:100,level:'重度抑郁',class:'',desc:'建议尽快咨询专业心理医生。'}],advice:['规律作息','适度运动','建立支持系统','设定小目标','必要时寻求专业治疗']},
+            mental:{name:'心理健康自评',intro:'综合评估整体心理健康状态，包含10个维度。',questions:['我能够应对日常压力','我对自己感到满意','我能够与他人建立良好关系','我能够有效管理情绪','我对未来充满希望','我能够集中注意力','我睡眠质量良好','我对自己的人生感到有意义','我能够适应变化','我能够享受生活'],options:['非常符合','比较符合','一般','不太符合','非常不符合'],scores:[5,4,3,2,1],reverse:[],levels:[{max:25,level:'需要关注',class:'',desc:'您的心理健康可能需要更多关注。'},{max:35,level:'一般',class:'',desc:'您的心理健康状况处于一般水平。'},{max:45,level:'良好',class:'',desc:'您的心理健康状况良好。'},{max:100,level:'优秀',class:'',desc:'您的心理健康状况非常优秀！'}],advice:['保持健康生活方式','定期自我调适','培养兴趣爱好','保持社交活动']}
+        };
+
+        const newsData = [
+            {title:'2026年心理健康白皮书发布：青少年心理问题引关注',date:'2026-03-15',month:'3月',day:'15',category:'行业动态',content:'国家卫生健康委员会发布《2026年中国心理健康白皮书》，数据显示我国青少年抑郁检出率呈上升趋势，约15.2%的青少年存在抑郁风险。'},
+            {title:'Nature子刊：AI辅助心理诊断准确率突破95%',date:'2026-03-12',month:'3月',day:'12',category:'研究动态',content:'斯坦福大学研究团队开发的AI心理诊断系统通过分析语音模式、面部表情和文字内容，能够以95%的准确率识别抑郁症和焦虑症。'},
+            {title:'积极心理学最新研究：感恩练习显著提升幸福感',date:'2026-03-10',month:'3月',day:'10',category:'研究动态',content:'哈佛大学研究显示，每日进行感恩练习的参与者幸福感评分平均提升25%，焦虑和抑郁症状显著减少。'},
+            {title:'中国心理学会召开2026年学术年会',date:'2026-03-08',month:'3月',day:'08',category:'学术会议',content:'中国心理学会2026年学术年会在北京召开，主题为"人工智能时代的心理健康"，吸引3500余名心理学工作者参加。'},
+            {title:'世界卫生组织发布新版心理健康指南',date:'2026-03-05',month:'3月',day:'05',category:'行业动态',content:'WHO发布新版《心理健康和心理社会支持指南》，强调初级保健在心理健康中的作用。'},
+            {title:'研究证实：正念冥想可改变大脑结构',date:'2026-03-03',month:'3月',day:'03',category:'研究动态',content:'德国马普研究所研究显示，持续8周正念冥想练习可显著增加大脑灰质密度。'},
+            {title:'青少年网络心理问题研讨会召开',date:'2026-02-28',month:'2月',day:'28',category:'社会热点',content:'专家指出网络成瘾、社交媒体焦虑、网络欺凌已成为影响青少年心理健康的主要因素。'},
+            {title:'认知行为疗法对焦虑症疗效显著',date:'2026-02-25',month:'2月',day:'25',category:'研究动态',content:'牛津大学研究证实认知行为疗法对焦虑症的治疗有效率可达68%，疗效可持续至少两年。'},
+            {title:'心理咨询师职业能力提升计划启动',date:'2026-02-20',month:'2月',day:'20',category:'行业动态',content:'人力资源社会保障部启动心理咨询师职业能力提升计划，将在未来三年内培训12万名合格心理咨询师。'},
+            {title:'睡眠与心理健康关系研究获新进展',date:'2026-02-15',month:'2月',day:'15',category:'研究动态',content:'加州大学伯克利分校研究发现深度睡眠具有"大脑清洁"功能，可清除与阿尔茨海默病相关的毒性蛋白。'},
+            {title:'社交媒体使用与心理健康研究发布',date:'2026-02-10',month:'2月',day:'10',category:'研究动态',content:'中科院心理研究所发布研究称，每日社交媒体使用超过3小时的青少年出现焦虑和抑郁症状的风险显著增加。'},
+            {title:'接纳承诺疗法培训项目启动',date:'2026-02-05',month:'2月',day:'05',category:'学术会议',content:'国际ACT疗法创始人团队与中国心理学会合作，在北京启动ACT培训项目。'},
+            {title:'职场心理健康研讨会召开',date:'2026-01-28',month:'1月',day:'28',category:'社会热点',content:'会议聚焦职场压力、倦怠综合征、职场人际关系等议题，建议企业建立员工心理援助计划。'},
+            {title:'创伤后应激障碍研究获突破',date:'2026-01-20',month:'1月',day:'20',category:'研究动态',content:'耶鲁大学研究发现PTSD患者在睡眠期间的脑电波模式与正常人存在显著差异。'},
+            {title:'心理学本科课程改革研讨会',date:'2026-01-15',month:'1月',day:'15',category:'学术会议',content:'会议建议增加人工智能心理学、计算心理学、神经经济学等新兴课程。'}
+        ];
+
+        let currentTest = null;
+        let currentQ = 0;
+        let answers = [];
+
+        // 页面跳转函数
+        function showPage(pageName) {
+            var pages = document.querySelectorAll('.page');
+            for (var i = 0; i < pages.length; i++) {
+                pages[i].classList.remove('active');
+            }
+            
+            var navLinks = document.querySelectorAll('.nav-link');
+            for (var i = 0; i < navLinks.length; i++) {
+                navLinks[i].classList.remove('active');
+            }
+            
+            var targetPage = document.getElementById('page-' + pageName);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+            
+            var navLink = document.getElementById('nav-' + pageName);
+            if (navLink) {
+                navLink.classList.add('active');
+            }
+            
+            // 初始化各页面数据
+            if (pageName === 'expertise') {
+                renderExpertise();
+            } else if (pageName === 'glossary') {
+                renderGlossary();
+            } else if (pageName === 'news') {
+                renderNews();
+            }
+            
+            window.scrollTo(0, 0);
+        }
+
+        function renderExpertise() {
+            var grid = document.getElementById('expertise-grid');
+            var html = '';
+            for (var i = 0; i < expertiseData.length; i++) {
+                var item = expertiseData[i];
+                var tag = item.type === 'school' ? '流派' : item.type === 'person' ? '人物' : '书籍';
+                html += '<div class="content-card" onclick="showExpertiseDetail(' + i + ')">';
+                html += '<div class="content-card-image">' + item.icon + '</div>';
+                html += '<div class="content-card-body">';
+                html += '<h3>' + item.title + '</h3>';
+                html += '<p>' + item.description + '</p>';
+                html += '<div class="content-card-meta">';
+                html += '<span class="content-card-tag">' + tag + '</span>';
+                html += '<span class="content-card-link">查看详情 →</span>';
+                html += '</div></div></div>';
+            }
+            grid.innerHTML = html;
+        }
+
+        function showExpertiseDetail(index) {
+            var item = expertiseData[index];
+            var content = item.content;
+            if (item.books && item.books.length > 0) {
+                content += '<h3>代表著作</h3><ul>';
+                for (var i = 0; i < item.books.length; i++) {
+                    var book = item.books[i];
+                    content += '<li><a href="' + book.link + '" target="_blank" style="color:#2D5A5A;">《' + book.title + '》</a></li>';
+                }
+                content += '</ul>';
+            }
+            if (item.link) {
+                content += '<p><a href="' + item.link + '" target="_blank" style="color:#D4A574;">在豆瓣阅读 →</a></p>';
+            }
+            document.getElementById('modal-title').textContent = item.title;
+            document.getElementById('modal-body').innerHTML = content;
+            document.getElementById('detail-modal').classList.add('active');
+        }
+
+        function renderGlossary() {
+            var grid = document.getElementById('glossary-grid');
+            var html = '';
+            for (var i = 0; i < glossaryData.length; i++) {
+                var item = glossaryData[i];
+                var cat = item.category === 'clinical' ? '临床' : item.category === 'social' ? '社会' : item.category === 'developmental' ? '发展' : '认知';
+                html += '<div class="content-card" onclick="showGlossaryDetail(' + i + ')">';
+                html += '<div class="content-card-image">' + item.icon + '</div>';
+                html += '<div class="content-card-body">';
+                html += '<h3>' + item.term + '</h3>';
+                html += '<p>' + item.definition.substring(0, 50) + '...</p>';
+                html += '<div class="content-card-meta">';
+                html += '<span class="content-card-tag">' + cat + '</span>';
+                html += '<span class="content-card-link">查看详情 →</span>';
+                html += '</div></div></div>';
+            }
+            grid.innerHTML = html;
+        }
+
+        function showGlossaryDetail(index) {
+            var item = glossaryData[index];
+            var casesHtml = '';
+            if (item.cases && item.cases.length > 0) {
+                casesHtml = '<h3>真实案例</h3>';
+                for (var i = 0; i < item.cases.length; i++) {
+                    var c = item.cases[i];
+                    casesHtml += '<div style="background:#f5f5f5;padding:12px;margin:8px 0;border-radius:8px;">';
+                    casesHtml += '<h4>' + c.title + '</h4>';
+                    casesHtml += '<p>' + c.content + '</p></div>';
+                }
+            }
+            var appHtml = item.application ? '<h3>实际应用</h3><p>' + item.application + '</p>' : '';
+            var srcHtml = item.source ? '<p style="color:#666;">📚 来源：' + item.source + '</p>' : '';
+            
+            document.getElementById('modal-title').textContent = item.term + (item.english ? ' (' + item.english + ')' : '');
+            document.getElementById('modal-body').innerHTML = srcHtml + '<h3>定义</h3><p>' + item.definition + '</p><h3>理论背景</h3><p>' + item.theory + '</p>' + casesHtml + appHtml;
+            document.getElementById('detail-modal').classList.add('active');
+        }
+
+        function filterGlossary() {
+            var search = document.getElementById('glossary-search').value.toLowerCase();
+            var cat = document.getElementById('glossary-category').value;
+            var filtered = [];
+            for (var i = 0; i < glossaryData.length; i++) {
+                var item = glossaryData[i];
+                var matchSearch = item.term.toLowerCase().includes(search) || item.definition.toLowerCase().includes(search);
+                var matchCat = cat === 'all' || item.category === cat;
+                if (matchSearch && matchCat) {
+                    filtered.push(item);
+                }
+            }
+            var grid = document.getElementById('glossary-grid');
+            var html = '';
+            for (var i = 0; i < filtered.length; i++) {
+                var item = filtered[i];
+                var catName = item.category === 'clinical' ? '临床' : item.category === 'social' ? '社会' : item.category === 'developmental' ? '发展' : '认知';
+                var origIndex = glossaryData.indexOf(item);
+                html += '<div class="content-card" onclick="showGlossaryDetail(' + origIndex + ')">';
+                html += '<div class="content-card-image">' + item.icon + '</div>';
+                html += '<div class="content-card-body">';
+                html += '<h3>' + item.term + '</h3>';
+                html += '<p>' + item.definition.substring(0, 50) + '...</p>';
+                html += '<div class="content-card-meta">';
+                html += '<span class="content-card-tag">' + catName + '</span>';
+                html += '<span class="content-card-link">查看详情 →</span>';
+                html += '</div></div></div>';
+            }
+            grid.innerHTML = html || '<p style="text-align:center;color:#666;grid-column:1/-1;">未找到匹配的术语</p>';
+        }
+
+        function renderNews() {
+            var list = document.getElementById('news-list');
+            var html = '';
+            for (var i = 0; i < newsData.length; i++) {
+                var item = newsData[i];
+                html += '<div class="news-item" onclick="showNewsDetail(' + i + ')">';
+                html += '<div class="news-date"><div class="news-date-day">' + item.day + '</div><div class="news-date-month">' + item.month + '</div></div>';
+                html += '<div class="news-content">';
+                html += '<h3>' + item.title + '</h3>';
+                html += '<p>' + item.content.substring(0, 80) + '...</p>';
+                html += '<span class="news-tag">' + item.category + '</span>';
+                html += '</div></div>';
+            }
+            list.innerHTML = html;
+        }
+
+        function showNewsDetail(index) {
+            var item = newsData[index];
+            document.getElementById('modal-title').textContent = item.title;
+            document.getElementById('modal-body').innerHTML = '<p style="color:#666;margin-bottom:18px;">发布时间：' + item.date + '</p><p style="margin-bottom:18px;">' + item.content + '</p><span class="news-tag">' + item.category + '</span>';
+            document.getElementById('detail-modal').classList.add('active');
+        }
+
+        function startTest(type) {
+            currentTest = testData[type];
+            currentQ = 0;
+            answers = [];
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            var q = currentTest.questions[currentQ];
+            var container = document.getElementById('test-select');
+            var optsHtml = '';
+            for (var i = 0; i < currentTest.options.length; i++) {
+                var selected = answers[currentQ] === i ? ' style="background:#2D5A5A;color:white;"' : '';
+                optsHtml += '<div class="test-card"' + selected + ' onclick="selectOpt(' + i + ')" style="margin-bottom:12px;">' + currentTest.options[i] + '</div>';
+            }
+            var btnText = currentQ === currentTest.questions.length - 1 ? '提交测试' : '下一题';
+            var prevDisabled = currentQ === 0 ? ' disabled style="opacity:0.5"' : '';
+            container.innerHTML = '<div style="max-width:600px;margin:0 auto;"><div style="margin-bottom:24px;"><span style="color:#2D5A5A;font-weight:700;">第' + (currentQ + 1) + '题/共' + currentTest.questions.length + '题</span></div><div style="font-size:18px;margin-bottom:24px;">' + q + '</div>' + optsHtml + '<div style="display:flex;gap:12px;justify-content:center;margin-top:24px;"><button class="test-btn"' + prevDisabled + ' onclick="prevQ()">上一题</button><button class="test-btn" onclick="nextQ()">' + btnText + '</button></div></div>';
+        }
+
+        function selectOpt(idx) {
+            answers[currentQ] = idx;
+            renderQuestion();
+        }
+
+        function prevQ() {
+            if (currentQ > 0) {
+                currentQ--;
+                renderQuestion();
+            }
+        }
+
+        function nextQ() {
+            if (answers[currentQ] === undefined) {
+                alert('请选择一个选项');
+                return;
+            }
+            if (currentQ < currentTest.questions.length - 1) {
+                currentQ++;
+                renderQuestion();
+            } else {
+                calcResult();
+            }
+        }
+
+        function calcResult() {
+            var total = 0;
+            for (var i = 0; i < answers.length; i++) {
+                var score = currentTest.scores[answers[i]];
+                if (currentTest.reverse.indexOf(i + 1) !== -1) {
+                    score = 5 - score;
+                }
+                total += score;
+            }
+            var stdScore = Math.round(total / currentTest.questions.length * 50);
+            var level = currentTest.levels[0];
+            for (var i = 0; i < currentTest.levels.length; i++) {
+                if (stdScore <= currentTest.levels[i].max) {
+                    level = currentTest.levels[i];
+                    break;
+                }
+            }
+            var adviceHtml = '<ul>';
+            for (var i = 0; i < currentTest.advice.length; i++) {
+                adviceHtml += '<li>' + currentTest.advice[i] + '</li>';
+            }
+            adviceHtml += '</ul>';
+            
+            var container = document.getElementById('test-select');
+            container.innerHTML = '<div style="max-width:600px;margin:0 auto;text-align:center;">';
+            container.innerHTML += '<div style="font-size:64px;font-weight:700;color:#2D5A5A;">' + stdScore + '</div>';
+            container.innerHTML += '<div style="font-size:24px;color:#2D5A5A;margin-bottom:16px;">' + level.level + '</div>';
+            container.innerHTML += '<p style="margin-bottom:24px;">' + level.desc + '</p>';
+            container.innerHTML += '<div style="text-align:left;margin-bottom:24px;"><h4 style="color:#2D5A5A;margin-bottom:12px;">建议</h4>' + adviceHtml + '</div>';
+            container.innerHTML += '<div class="disclaimer"><h4>⚠️ 免责声明</h4><ul><li>本测试结果仅供参考，不能替代专业医疗诊断</li><li>如果您感到心理困扰严重，请尽快前往正规医院精神科或专业心理机构就诊</li><li>如出现自杀倾向或严重心理危机，请立即拨打心理危机干预热线</li></ul></div>';
+            container.innerHTML += '<button class="test-btn" onclick="resetTest()" style="margin-top:24px;">重新测试</button></div>';
+        }
+
+        function resetTest() {
+            currentTest = null;
+            currentQ = 0;
+            answers = [];
+            var container = document.getElementById('test-select');
+            container.innerHTML = '<div class="test-card" onclick="startTest(\'anxiety\')"><h3>焦虑自评量表(SAS)</h3><p>用于评估焦虑状态的严重程度，包含20个条目</p><button class="test-btn">开始测试</button></div><div class="test-card" onclick="startTest(\'depression\')"><h3>抑郁自评量表(SDS)</h3><p>用于评估抑郁状态的严重程度，包含20个条目</p><button class="test-btn">开始测试</button></div><div class="test-card" onclick="startTest(\'mental\')"><h3>心理健康自评</h3><p>综合评估整体心理健康状态，包含10个维度</p><button class="test-btn">开始测试</button></div>';
+        }
+
+        function closeModal() {
+            document.getElementById('detail-modal').classList.remove('active');
+        }
+
+        // 用户系统
+        var currentUser = null;
+
+        function initUserSystem() {
+            var saved = localStorage.getItem('qx_user');
+            if (saved) {
+                currentUser = JSON.parse(saved);
+                updateUserArea();
+            }
+        }
+
+        function updateUserArea() {
+            var area = document.querySelector('.user-area');
+            if (currentUser) {
+                area.innerHTML = '<div style="display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="showUserCenter()"><div style="width:36px;height:36px;border-radius:50%;background:#D4A574;display:flex;align-items:center;justify-content:center;color:white;font-weight:600;">' + currentUser.username.charAt(0).toUpperCase() + '</div><span style="font-size:14px;">' + currentUser.username + '</span></div>';
+            } else {
+                area.innerHTML = '<button class="login-btn" onclick="showAuthModal()">登录/注册</button>';
+            }
+        }
+
+        function showAuthModal() {
+            document.getElementById('auth-modal').classList.add('active');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.remove('active');
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+            document.getElementById('register-username').value = '';
+            document.getElementById('register-email').value = '';
+            document.getElementById('register-password').value = '';
+        }
+
+        function switchAuthTab(tab) {
+            document.getElementById('tab-login').style.background = tab === 'login' ? '#2D5A5A' : '#666';
+            document.getElementById('tab-register').style.background = tab === 'register' ? '#2D5A5A' : '#666';
+            document.getElementById('login-form').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('register-form').style.display = tab === 'register' ? 'block' : 'none';
+            document.getElementById('auth-title').textContent = tab === 'login' ? '用户登录' : '用户注册';
+        }
+
+        function handleLogin() {
+            var username = document.getElementById('login-username').value;
+            var password = document.getElementById('login-password').value;
+            if (!username || !password) {
+                alert('请输入用户名和密码');
+                return;
+            }
+            var users = JSON.parse(localStorage.getItem('qx_users') || '[]');
+            var user = null;
+            for (var i = 0; i < users.length; i++) {
+                if ((users[i].username === username || users[i].email === username) && users[i].password === password) {
+                    user = users[i];
+                    break;
+                }
+            }
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('qx_user', JSON.stringify(user));
+                closeAuthModal();
+                updateUserArea();
+                alert('登录成功！欢迎回来，' + user.username);
+            } else {
+                alert('用户名或密码错误');
+            }
+        }
+
+        function handleRegister() {
+            var username = document.getElementById('register-username').value;
+            var email = document.getElementById('register-email').value;
+            var password = document.getElementById('register-password').value;
+            if (!username || !email || !password) {
+                alert('请填写完整信息');
+                return;
+            }
+            var users = JSON.parse(localStorage.getItem('qx_users') || '[]');
+            for (var i = 0; i < users.length; i++) {
+                if (users[i].username === username || users[i].email === email) {
+                    alert('用户名或邮箱已存在');
+                    return;
+                }
+            }
+            var newUser = {
+                username: username,
+                email: email,
+                password: password,
+                browseHistory: [],
+                testHistory: []
+            };
+            users.push(newUser);
+            localStorage.setItem('qx_users', JSON.stringify(users));
+            currentUser = newUser;
+            localStorage.setItem('qx_user', JSON.stringify(newUser));
+            closeAuthModal();
+            updateUserArea();
+            alert('注册成功！欢迎加入倾心心理');
+        }
+
+        function showUserCenter() {
+            alert('用户中心功能：\n\n浏览记录：' + (currentUser.browseHistory ? currentUser.browseHistory.length : 0) + '条\n测试记录：' + (currentUser.testHistory ? currentUser.testHistory.length : 0) + '条');
+        }
+
+        // 初始化用户系统
+        initUserSystem();
+
+        // 点击模态框外部关闭
+        document.getElementById('detail-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
